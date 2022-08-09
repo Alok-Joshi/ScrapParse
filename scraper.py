@@ -1,6 +1,9 @@
+from cmath import log
 import requests
 from bs4 import BeautifulSoup
 import re
+import os
+import logging
 import pdb
 import pprint
 from datetime import datetime
@@ -47,6 +50,30 @@ def get_cause_list_links(links):
     print(cause_list_links)
     return cause_list_links
 
+
+def download_files(path, links):
+    if links is None:
+        logging.warning('No links')
+        return
+    try:
+        os.mkdir(path)
+    except:
+        logging.warning('Path already exists')
+    for link in links:
+        if not (link.endswith('.pdf')):
+            logging.error('Bad Link')
+            continue
+        request = requests.get(link, allow_redirects=True, verify=False)
+        if request.headers.get('Content-Type') != 'application/pdf':
+            logging.error('Bad file, check your link')
+            continue
+        content = request.content
+        file_name = "CauseList "+datetime.now().strftime("%d %B")+".pdf"
+        file = os.path.join(path, file_name)
+        with open(file, 'wb') as f:
+            f.write(content)
+        
+
 def run():
     source = get_page_source()
     soup = get_soup(source)
@@ -55,4 +82,5 @@ def run():
     return cause_lists
 
 if __name__ == '__main__':
-    run()
+    links = run()
+    download_files(os.path.dirname(__file__), links)
