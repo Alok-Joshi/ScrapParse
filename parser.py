@@ -1,6 +1,6 @@
 from PyPDF2 import PdfReader
 import re
-
+import logging
 
 def pdf_to_text(pdf_name):
     """ Converts the pdf into a text string """
@@ -26,11 +26,12 @@ def create_table(text):
     case_line_positions = []
 
     for i in range(len(text_lines)):
-        if("CASES AT" in text_lines[i]): #use regex here later 
+        if(re.search("CASES AT",text_lines[i])): #use regex here later 
             case_line_positions.append(i)
             
     case_line_positions.append(len(text_lines) - 1) #for the last part
-    print(case_line_positions)
+    logging.info("Case Line Numbers: "+str(case_line_positions))
+
     for i in range(len(case_line_positions)-1):
         lower_pos = case_line_positions[i] #the date
         upper_pos = case_line_positions[i+1] #The next date,but just before 
@@ -42,14 +43,26 @@ def create_table(text):
 
     return table
 
-def get_date(case_number,tables):
+def get_date(case_number,table):
     """ Extracts the date for the given case_number """ 
     
-    for table in tables:
-        if(case_number in table):
-            return tables[table]
+    for content in table:
+        if(re.search(case_number ,content)):
+            return table[content]
 
     return None
-    
+def generate_regex_string(string):
+    """ Converts the string into a regex appropriate format 
+        "116/2017(WZ)" --> "116/2017\(WZ\)  ( '(' is a special character for regex and hence to make sure it matches and its special meaning is not used we add a \ before it 
+        """
+    pass
+    regex_string = ""
+    for char in string:
+        if(char == '(' or char == ')'):
+            regex_string += "\\"
+
+        regex_string += char
+    return regex_string
+
 
 
