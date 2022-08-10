@@ -18,7 +18,7 @@ def extract_date(date_string):
     date = date_string[len(date_string)-1]
     return date
 
-def get_case_date_htable(text):
+def create_table(text):
     """ Creates the hash table with (key : value), with key as the table(string) which comes under the CASES AT SR.. Line, and the value as its corresponding date """
 
     text_lines = text.split("\n")
@@ -42,10 +42,14 @@ def get_case_date_htable(text):
 
     return table
 
-
-
-def get_date(case_number,text):
+def get_date(case_number,tables):
     """ Extracts the date for the given case_number """ 
+    
+    for table in tables:
+        if(case_number in table):
+            return tables[table]
+
+    return None
     
 
 
