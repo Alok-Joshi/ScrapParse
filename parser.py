@@ -13,6 +13,7 @@ def pdf_to_text(pdf_name):
     return text
 def extract_date(date_string):
     """ Takes the "CASES AT SR ... ON 02.08.2022" string and returns the date from it (in string format //can be changed ) """
+    assert len(date_string) !=0
 
     date_string = date_string.split() #Last element gives us the date 
     date = date_string[len(date_string)-1]
@@ -45,23 +46,26 @@ def create_table(text):
 
 def get_date(case_number,table):
     """ Extracts the date for the given case_number """ 
-    
+
     for content in table:
         if(re.search(case_number ,content)):
             return table[content]
-
     return None
+
 def generate_regex_string(string):
     """ Converts the string into a regex appropriate format 
-        "116/2017(WZ)" --> "116/2017\(WZ\)  ( '(' is a special character for regex and hence to make sure it matches and its special meaning is not used we add a \ before it 
-        """
-    pass
+        "116/2017(WZ)" --> "116/2017\\(WZ\\)  ( '(' is a special character for regex and hence to make sure it matches and its special meaning is not used we add a \\ before it 
+    
+    """
+    assert string is not None
+
     regex_string = ""
     for char in string:
         if(char == '(' or char == ')'):
             regex_string += "\\"
 
         regex_string += char
+
     return regex_string
 
 
