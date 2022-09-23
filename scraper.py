@@ -31,21 +31,21 @@ def get_all_links(soup):
 
 def get_cause_list_links(links):
     cause_list_links = []
-
+    #pdb.set_trace()
     for link in links:
         content = str(link.contents[0])
         if not (re.search("Advance+", content) or re.search("Supplementary+", content)):
             date = content[22:content.index(",")]
             if "1st" in date:
-                date = datetime.strptime(date, "%dst %B %Y")
+                date = datetime.strptime(date, "%dst %B %Y").date()
             elif "rd" in date:
-                date = datetime.strptime(date, "%drd %B %Y")
+                date = datetime.strptime(date, "%drd %B %Y").date()
             elif "nd" in date:
-                date = datetime.strptime(date, "%dnd %B %Y")
+                date = datetime.strptime(date, "%dnd %B %Y").date()
             else:
-                date = datetime.strptime(date, "%dth %B %Y")
+                date = datetime.strptime(date, "%dth %B %Y").date()
 
-            if(date>=datetime.now()):
+            if(date >=datetime.now().date()):
                 cause_list_links.append(link.get('href'))
     print(cause_list_links)
     return cause_list_links
